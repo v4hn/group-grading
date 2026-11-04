@@ -78,7 +78,7 @@ for (const ev of ["dragover", "drop"]) window.addEventListener(ev, (e) => e.prev
 
 // ---------------------------------------------------------------- submissions tab
 
-const emptyForm = () => ({ id: null, assignment: Object.keys(S.tasks)[0] || "", group: [], pending: [], existing: [] });
+const emptyForm = (assignment = Object.keys(S.tasks)[0] || "") => ({ id: null, assignment, group: [], pending: [], existing: [] });
 let F = emptyForm();
 let studentSort = null;
 
@@ -148,13 +148,14 @@ function renderStudentList() {
     .map((s) => {
       const used = F.group.includes(s.id);
       const other = otherSubmissionFor(s.id);
-      const li = h("li", { draggable: used ? false : "true", class: used ? "used" : "", title: other ? `Already in ${other.id}` : "" },
+      const li = h("li", { draggable: used ? false : "true", class: [used && "used", other && "assigned"].filter(Boolean).join(" "), title: other ? `Already in ${other.id}` : "" },
         h("span", {}, `${s.name}, ${s.first_name}`),
-        h("span", { class: "meta" }, other ? `${s.id} · in ${other.id}` : s.id));
+        h("span", { class: "meta" }, s.id));
       li.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/x-student-id", s.id));
       li.addEventListener("dblclick", () => addToGroup(s.id));
       return li;
     });
+  $("#student-count").textContent = items.length;
   $("#student-list").replaceChildren(...items);
 }
 
@@ -222,13 +223,13 @@ $("#save-submission").addEventListener("click", guard(async () => {
   }
   await loadSubmissions();
   setStatus(`Saved ${sub.id}`);
-  F = emptyForm();
+  F = emptyForm(sub.assignment);
   renderSubmissionsTab();
 }));
 
 function renderSubmissionTable() {
   const head = h("tr", {}, ...["ID", "Assignment", "Members", "Files", ""].map((t) => h("th", {}, t)));
-  const rows = S.submissions.map((s) =>
+  const rows = [...S.submissions].reverse().map((s) =>
     h("tr", {},
       h("td", {}, s.id),
       h("td", {}, s.assignment),

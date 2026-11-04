@@ -35,6 +35,7 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; }
 .student-list { list-style: none; margin: 8px 0 0; padding: 0; max-height: 420px; overflow: auto; border: 1px solid var(--border); border-radius: 4px; }
 .student-list li { padding: 5px 8px; cursor: grab; border-bottom: 1px solid #eceef2; display: flex; justify-content: space-between; gap: 8px; }
 .student-list li:hover { background: #eef3ff; }
+.student-list li.assigned, .student-list li.assigned:hover { background: #d9dce1; }
 .student-list li.used { opacity: .4; cursor: not-allowed; }
 .student-list .meta { color: #666; font-size: 12px; white-space: nowrap; }
 
