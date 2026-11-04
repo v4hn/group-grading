@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "group-grading"
+version = "0.1.0"
+description = "Local web app to collect group submissions, grade them with Markdown feedback, and export student reports."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.162",
+    "uvicorn>=0.54",
+    "pyyaml>=6.0",
+    "python-multipart>=0.0.33",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=9.2", "httpx>=0.28"]
+
+[project.scripts]
+group-grading = "group_grading.__main__:main"
+
+[tool.setuptools]
+packages = ["group_grading"]
+
+[tool.setuptools.package-data]
+group_grading = ["static/*", "static/vendor/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

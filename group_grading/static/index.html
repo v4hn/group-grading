@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Group Grading</title>
+  <link rel="stylesheet" href="vendor/codemirror.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Group Grading</h1>
+    <nav id="tabs">
+      <button data-tab="submissions" class="active">Submissions</button>
+      <button data-tab="grading">Grading</button>
+      <button data-tab="overview">Overview</button>
+    </nav>
+    <span id="status"></span>
+  </header>
+
+  <main>
+    <section id="tab-submissions" class="tab">
+      <div class="cols">
+        <div class="panel">
+          <h2>Students</h2>
+          <input id="student-search" type="search" placeholder="Search name or ID…" autocomplete="off">
+          <div id="student-sort" class="sort-buttons">
+            <button data-sort="name">Name</button>
+            <button data-sort="first_name">First name</button>
+            <button data-sort="id">ID</button>
+          </div>
+          <ul id="student-list" class="student-list"></ul>
+          <p class="hint">Drag onto the group, or double-click.</p>
+        </div>
+
+        <div class="panel grow">
+          <h2 id="form-title">New submission</h2>
+          <label>Assignment <select id="assignment"></select></label>
+
+          <h3>This group <small>(1–4 students)</small></h3>
+          <div id="group-zone" class="dropzone"></div>
+          <p id="group-warning" class="warn"></p>
+
+          <h3>Files</h3>
+          <div id="file-zone" class="dropzone" tabindex="0">
+            <span class="placeholder">Drop files here or click to choose</span>
+            <ul id="file-list"></ul>
+          </div>
+          <input id="file-input" type="file" multiple hidden>
+
+          <div class="actions">
+            <button id="save-submission" class="primary">Save submission</button>
+            <button id="reset-form">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Submissions</h2>
+        <table id="submission-table" class="data"></table>
+      </div>
+    </section>
+
+    <section id="tab-grading" class="tab" hidden>
+      <div class="toolbar">
+        <label>Submission <select id="grade-submission"></select></label>
+        <span id="save-state" class="hint"></span>
+      </div>
+      <div id="grading-body"></div>
+    </section>
+
+    <section id="tab-overview" class="tab" hidden>
+      <div class="toolbar">
+        <input id="overview-filter" type="search" placeholder="Filter students…" autocomplete="off">
+        <button id="export-csv">Export CSV</button>
+        <button id="download-all">Download all ZIPs</button>
+      </div>
+      <table id="overview-table" class="data"></table>
+    </section>
+  </main>
+
+  <dialog id="report-dialog">
+    <h2 id="report-title"></h2>
+    <div class="dialog-body">
+      <textarea id="report-text" readonly></textarea>
+      <div id="report-preview" class="preview"></div>
+    </div>
+    <div class="actions">
+      <button id="report-copy">Copy Markdown</button>
+      <a id="report-download" class="button" href="#">Download .md</a>
+      <button id="report-close">Close</button>
+    </div>
+  </dialog>
+
+  <script src="vendor/codemirror.js"></script>
+  <script src="vendor/meta.js"></script>
+  <script src="vendor/xml.js"></script>
+  <script src="vendor/overlay.js"></script>
+  <script src="vendor/markdown.js"></script>
+  <script src="vendor/marked.min.js"></script>
+  <script src="vendor/purify.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
