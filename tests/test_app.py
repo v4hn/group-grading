@@ -43,7 +43,6 @@ def test_create_validation(client):
     bad = [
         {"assignment": "nope", "students": ["1"]},
         {"assignment": "a1", "students": []},
-        {"assignment": "a1", "students": ["1", "2", "3", "4", "5"]},
         {"assignment": "a1", "students": ["1", "1"]},
         {"assignment": "a1", "students": ["999"]},
     ]

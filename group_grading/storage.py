@@ -17,7 +17,6 @@ from typing import Any, BinaryIO
 import yaml
 
 MIN_GROUP = 1
-MAX_GROUP = 4
 
 _SUBMISSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
@@ -173,8 +172,8 @@ class Course:
         ids = [str(s) for s in student_ids]
         if len(set(ids)) != len(ids):
             raise StorageError("Duplicate student in group")
-        if not MIN_GROUP <= len(ids) <= MAX_GROUP:
-            raise StorageError(f"A group needs {MIN_GROUP}-{MAX_GROUP} students")
+        if len(ids) < MIN_GROUP:
+            raise StorageError("A group needs at least one student")
         known = self.student_map()
         unknown = [s for s in ids if s not in known]
         if unknown:

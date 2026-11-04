@@ -161,7 +161,6 @@ function renderStudentList() {
 
 function addToGroup(id) {
   if (F.group.includes(id)) return;
-  if (F.group.length >= 4) return setStatus("A group has at most 4 students");
   F.group.push(id);
   renderForm();
 }
