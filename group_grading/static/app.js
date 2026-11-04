@@ -93,6 +93,16 @@ function otherSubmissionFor(studentId) {
   );
 }
 
+function suggestedMembers() {
+  const selected = new Set(F.group);
+  const out = new Set();
+  for (const s of S.submissions) {
+    if (s.id === F.id || !s.students.some((id) => selected.has(id))) continue;
+    for (const id of s.students) if (!selected.has(id) && !otherSubmissionFor(id)) out.add(id);
+  }
+  return [...out];
+}
+
 function renderForm() {
   $("#form-title").textContent = F.id ? `Edit ${F.id}` : "New submission";
 
@@ -107,7 +117,9 @@ function renderForm() {
             title: "Remove", onclick: () => { F.group = F.group.filter((g) => g !== id); renderForm(); },
           }, "×"))
         )
-      : [h("span", { class: "placeholder" }, "Drop students here")])
+      : [h("span", { class: "placeholder" }, "Drop students here")]),
+    ...suggestedMembers().map((id) =>
+      h("span", { class: "chip suggested", title: "Suggested: has worked with a selected member. Click to add.", onclick: () => addToGroup(id) }, nameOf(id)))
   );
 
   const dupes = F.group

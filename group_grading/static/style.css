@@ -47,6 +47,8 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; }
 .placeholder { color: #888; }
 .chip { background: #e4ebfb; border-radius: 14px; padding: 3px 6px 3px 12px; display: inline-flex; align-items: center; gap: 6px; }
 .chip button { border: 0; background: none; padding: 0 4px; font-size: 16px; line-height: 1; }
+.chip.suggested { background: #e4e6ea; color: #777; padding-right: 12px; cursor: pointer; }
+.chip.suggested:hover { background: #d3d6db; color: #333; }
 .tag { font-size: 12px; background: #eceef2; border-radius: 3px; padding: 0 5px; }
 .tag.new { background: #dcfce7; }
 
