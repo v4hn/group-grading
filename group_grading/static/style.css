@@ -68,7 +68,8 @@ table.data tr:hover td { background: #f7f9fe; }
 .task-head input.over-max { border-color: var(--warn); background: #fff7ed; }
 .md-wrap { display: flex; gap: 12px; }
 .md-wrap > * { flex: 1; min-width: 0; }
-.md-wrap .CodeMirror { border: 1px solid var(--border); border-radius: 4px; height: auto; min-height: 90px; font-size: 14px; }
+.md-host { display: flex; flex-direction: column; }
+.md-wrap .CodeMirror { flex: 1; border: 1px solid var(--border); border-radius: 4px; height: auto; min-height: 90px; font-size: 14px; }
 .preview { border: 1px solid var(--border); border-radius: 4px; padding: 4px 12px; background: #fcfcfd; overflow: auto; }
 .preview:empty { display: none; }
 .override-box { background: #fffbeb; border-color: #f3dfa2; }

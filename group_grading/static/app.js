@@ -299,7 +299,7 @@ function scheduleSave() {
 window.addEventListener("beforeunload", (e) => { if (G.dirty) e.preventDefault(); });
 
 function mdEditor(value, onChange) {
-  const host = h("div");
+  const host = h("div", { class: "md-host" });
   const preview = h("div", { class: "preview" });
   const wrap = h("div", { class: "md-wrap" }, host, preview);
   const cm = CodeMirror(host, { value: value || "", mode: "markdown", lineWrapping: true, viewportMargin: Infinity });
