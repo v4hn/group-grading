@@ -48,7 +48,7 @@ def student_report(course: Course, student_id: str) -> str:
     else:
         out += ["_No graded submissions yet._", ""]
 
-    for r in results:
+    for r in graded:
         out += [f"## {r['assignment']}", ""]
         others = [display_name(names[s]) for s in r["group"] if s != student_id and s in names]
         if others:
