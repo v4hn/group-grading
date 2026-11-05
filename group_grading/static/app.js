@@ -291,7 +291,7 @@ async function saveGrades() {
 
 function scheduleSave() {
   G.dirty = true;
-  $("#save-state").textContent = "Unsaved changes…";
+  $("#save-state").textContent = "Changes…";
   clearTimeout(G.timer);
   G.timer = setTimeout(guard(saveGrades), 600);
 }
