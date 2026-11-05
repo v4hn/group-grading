@@ -93,19 +93,41 @@ class Course:
     def student_map(self) -> dict[str, dict[str, str]]:
         return {s["id"]: s for s in self.students()}
 
-    def tasks(self) -> dict[str, dict[str, float | int]]:
+    def _task_specs(self) -> dict[str, dict[str, tuple[float | int, float | int]]]:
+        """assignment -> task -> (max points, weight); a task is `points` or `{Points, Weight}`."""
         path = self.root / "tasks.yaml"
         if not path.exists():
             return {}
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         if not isinstance(data, dict):
             raise StorageError("tasks.yaml must be a mapping of assignment -> task -> points")
-        result: dict[str, dict[str, float | int]] = {}
+        result: dict[str, dict[str, tuple[float | int, float | int]]] = {}
         for assignment, tasks in data.items():
             if not isinstance(tasks, dict):
                 raise StorageError(f"tasks.yaml: '{assignment}' must map task names to points")
-            result[str(assignment)] = {str(t): p for t, p in tasks.items()}
+            specs = {}
+            for task, spec in tasks.items():
+                where = f"tasks.yaml: '{assignment}' / '{task}'"
+                if isinstance(spec, dict):
+                    lowered = {str(k).lower(): v for k, v in spec.items()}
+                    unknown = set(lowered) - {"points", "weight"}
+                    if unknown or "points" not in lowered:
+                        raise StorageError(f"{where} must have 'Points' and optionally 'Weight'")
+                    points, weight = lowered["points"], lowered.get("weight", 1)
+                else:
+                    points, weight = spec, 1
+                for label, value in (("Points", points), ("Weight", weight)):
+                    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+                        raise StorageError(f"{where}: invalid {label} value {value!r}")
+                specs[str(task)] = (points, weight)
+            result[str(assignment)] = specs
         return result
+
+    def tasks(self) -> dict[str, dict[str, float | int]]:
+        return {a: {t: p for t, (p, _) in specs.items()} for a, specs in self._task_specs().items()}
+
+    def weights(self) -> dict[str, dict[str, float | int]]:
+        return {a: {t: w for t, (_, w) in specs.items()} for a, specs in self._task_specs().items()}
 
     # ---- submissions ------------------------------------------------------
 

@@ -55,10 +55,12 @@ def student_report(course: Course, student_id: str) -> str:
             out += [f"Group: {', '.join(others)}, {display_name(student)}", ""]
         if r["files"]:
             out += ["Submitted files: " + ", ".join(f"`{f}`" for f in r["files"]), ""]
-        out += ["| Task | Points |", "|---|---:|"]
+        weighted = any(t["weight"] != 1 for t in r["tasks"])
+        out += ["| Task | Weight | Points |", "|---|---:|---:|"] if weighted else ["| Task | Points |", "|---|---:|"]
         for t in r["tasks"]:
-            out.append(f"| {t['task']} | {_fmt(t['points'])} / {t['max']} |")
-        out += [f"| **Total** | **{r['total']} / {r['max']}** |", ""]
+            weight = f" | {t['weight']}" if weighted else ""
+            out.append(f"| {t['task']}{weight} | {_fmt(t['points'])} / {t['max']} |")
+        out += [f"| **Total**{' |' if weighted else ''} | **{r['total']} / {r['max']}** |", ""]
         for t in r["tasks"]:
             if t["feedback"].strip():
                 out += [f"### {t['task']} ({_fmt(t['points'])} / {t['max']})", "", t["feedback"].strip(), ""]

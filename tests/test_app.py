@@ -39,6 +39,20 @@ def test_tasks_keep_order(client):
     assert list(client.get("/api/tasks").json()["a1"]) == ["T1", "T2"]
 
 
+def test_task_weights(client, course_dir):
+    (course_dir / "tasks.yaml").write_text("a1:\n  T1: 10\n  T2:\n    Points: 5\n    Weight: 3\n", encoding="utf-8")
+    assert client.get("/api/tasks").json()["a1"] == {"T1": 10, "T2": 5}
+    sub = make_sub(client)
+    client.put(f"/api/submissions/{sub['id']}/grades", json={"grades": {"T1": {"points": 10}, "T2": {"points": 4}}})
+    result = client.get("/api/students/1/results").json()[0]
+    assert (result["total"], result["max"]) == (22, 25)
+
+
+def test_task_weight_invalid(client, course_dir):
+    (course_dir / "tasks.yaml").write_text("a1:\n  T1:\n    Points: 5\n    Weigth: 3\n", encoding="utf-8")
+    assert client.get("/api/tasks").status_code == 400
+
+
 def test_create_validation(client):
     bad = [
         {"assignment": "nope", "students": ["1"]},

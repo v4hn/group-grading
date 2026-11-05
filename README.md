@@ -29,8 +29,12 @@ course/
 ```yaml
 assignment1:
   Task 1: 10
-  Task 2: 15
+  Task 2:
+    Points: 15
+    Weight: 2   # optional, default 1
 ```
+
+The weight multiplies a task's points in the assignment total and maximum (the per-task grade stays unweighted).
 
 ## Workflow
 
