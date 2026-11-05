@@ -64,7 +64,7 @@ table.data tr:hover td { background: #f7f9fe; }
 .task-card { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; }
 .task-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .task-head h3 { margin: 0; flex: 1; font-size: 15px; }
-.task-head input[type=number] { width: 80px; }
+.task-head input[type=number] { width: 66px; font-size: 17px; padding: 7px 10px; }
 .task-head input.over-max { border-color: var(--warn); background: #fff7ed; }
 .md-wrap { display: flex; gap: 12px; }
 .md-wrap > * { flex: 1; min-width: 0; }
