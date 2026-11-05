@@ -76,6 +76,7 @@ def overview(course: Course) -> dict[str, Any]:
     tasks = course.tasks()
     weights = course.weights()
     submissions = course.list_submissions()
+    maximum = sum(_max_points(t, weights.get(a)) for a, t in tasks.items())
     rows = []
     for student in course.students():
         sid = student["id"]
@@ -100,7 +101,6 @@ def overview(course: Course) -> dict[str, Any]:
         }
         graded_cells = [r for r in per_assignment.values() if r["graded"]]
         total = sum(r["total"] for r in graded_cells)
-        maximum = sum(r["max"] for r in graded_cells)
         rows.append(
             {
                 "student": student,
@@ -111,6 +111,7 @@ def overview(course: Course) -> dict[str, Any]:
             }
         )
     return {
+        "max": _num(maximum),
         "assignments": [
             {"name": a, "max": _num(_max_points(t, weights.get(a)))} for a, t in tasks.items()
         ],

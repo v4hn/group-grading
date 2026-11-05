@@ -119,14 +119,14 @@ def test_overview_uses_overrides(client):
     rows = {r["student"]["id"]: r for r in client.get("/api/overview").json()["rows"]}
     assert rows["1"]["assignments"]["a1"]["points"] == 13
     assert rows["2"]["assignments"]["a1"]["points"] == 11
-    assert rows["2"]["percent"] == pytest.approx(73.3)
-    assert rows["3"]["assignments"] == {} and rows["3"]["percent"] is None
+    assert rows["2"]["percent"] == pytest.approx(31.4)
+    assert rows["3"]["assignments"] == {} and rows["3"]["percent"] == 0 and rows["3"]["max"] == 35
 
 
 def test_ungraded_submission_has_no_points(client):
     make_sub(client)
     row = next(r for r in client.get("/api/overview").json()["rows"] if r["student"]["id"] == "1")
-    assert row["assignments"]["a1"]["points"] is None and row["max"] == 0
+    assert row["assignments"]["a1"]["points"] is None and row["max"] == 35 and row["total"] == 0
 
 
 def test_duplicate_assignment_latest_wins(client):
@@ -145,7 +145,7 @@ def test_report_and_csv(client):
     assert "late" in report and "Well done." in report and "**Total: 11 / 15 points" in report
     csv_text = client.get("/api/overview.csv").text.splitlines()
     assert csv_text[0] == "ID,Name,First Name,a1,a2,Total,Max,Percent"
-    assert csv_text[2].startswith("2,Schmidt,Ben,11,,11,15,")
+    assert csv_text[2].startswith("2,Schmidt,Ben,11,,11,35,")
     assert client.get("/api/students/999/report.md").status_code == 404
 
 
