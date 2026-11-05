@@ -128,6 +128,14 @@ def create_app(course_dir: str | os.PathLike[str]) -> FastAPI:
             headers["Content-Disposition"] = f'attachment; filename="{student_id}.md"'
         return Response(text, media_type="text/markdown; charset=utf-8", headers=headers)
 
+    @app.get("/api/submissions/{sid}/report.md")
+    def submission_report(sid: str, student: str, download: bool = False):
+        text = reports.student_report(course, student, sid)
+        headers = {}
+        if download:
+            headers["Content-Disposition"] = f'attachment; filename="{student}_{sid}.md"'
+        return Response(text, media_type="text/markdown; charset=utf-8", headers=headers)
+
     @app.get("/api/students/{student_id}/bundle.zip")
     def student_bundle(student_id: str):
         path, filename = reports.student_zip(course, student_id)

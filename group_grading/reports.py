@@ -33,10 +33,14 @@ def _get_student(course: Course, student_id: str) -> dict[str, str]:
     return student
 
 
-def student_report(course: Course, student_id: str) -> str:
+def student_report(course: Course, student_id: str, submission_id: str | None = None) -> str:
     student = _get_student(course, student_id)
     names = course.student_map()
     results = student_results(course, student_id)
+    if submission_id is not None:
+        results = [r for r in results if r["submission_id"] == submission_id]
+        if not results:
+            raise NotFound("Student is not part of this submission")
     graded = [r for r in results if r["graded"]]
     total = sum(r["total"] for r in graded)
     maximum = sum(r["max"] for r in graded)

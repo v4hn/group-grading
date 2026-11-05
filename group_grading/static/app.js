@@ -374,6 +374,8 @@ function renderGradingBody() {
 
   const header = h("div", { class: "panel", style: "margin-bottom:12px" },
     h("button", { style: "float:right", onclick: guard(() => openEditing(sub)) }, "Edit submission"),
+    ...sub.students.map((id) => h("button", { style: "float:right;margin-right:6px", onclick: guard(() => openReport(S.studentById[id] || { id, name: id, first_name: "" }, sub.id)) },
+      sub.students.length > 1 ? `Report: ${nameOf(id)}` : "Report")),
     h("strong", {}, sub.assignment), " · ", sub.students.map(nameOf).join(", "),
     h("div", { class: "hint" }, "Files: ", ...(sub.files.length
       ? sub.files.flatMap((f, i) => [i ? ", " : null, h("a", { href: fileUrl(sub.id, f) }, f)])
@@ -496,13 +498,16 @@ $("#overview-filter").addEventListener("input", () => O.data && renderOverview()
 $("#export-csv").addEventListener("click", () => { location.href = "/api/overview.csv"; });
 $("#download-all").addEventListener("click", () => { location.href = "/api/bundle-all.zip"; });
 
-async function openReport(student) {
+async function openReport(student, submissionId = null) {
   const sid = encodeURIComponent(student.id);
-  const text = await api("GET", `/api/students/${sid}/report.md`);
+  const url = submissionId
+    ? `/api/submissions/${encodeURIComponent(submissionId)}/report.md?student=${sid}`
+    : `/api/students/${sid}/report.md`;
+  const text = await api("GET", url);
   $("#report-title").textContent = `Report: ${fullName(student)} (${student.id})`;
   $("#report-text").value = text;
   $("#report-preview").innerHTML = renderMd(text);
-  $("#report-download").href = `/api/students/${sid}/report.md?download=true`;
+  $("#report-download").href = `${url}${submissionId ? "&" : "?"}download=true`;
   $("#report-dialog").showModal();
 }
 
