@@ -151,11 +151,14 @@ function renderForm() {
   renderStudentList();
 }
 
-function renderStudentList() {
+function matchingStudents() {
   const q = $("#student-search").value.trim().toLowerCase();
+  return S.students.filter((s) => !q || `${fullName(s)} ${s.name} ${s.id}`.toLowerCase().includes(q));
+}
+
+function renderStudentList() {
   for (const b of document.querySelectorAll("#student-sort button")) b.classList.toggle("active", b.dataset.sort === studentSort);
-  const items = S.students
-    .filter((s) => !q || `${fullName(s)} ${s.name} ${s.id}`.toLowerCase().includes(q))
+  const items = matchingStudents()
     .sort((a, b) => studentSort ? a[studentSort].localeCompare(b[studentSort], undefined, { numeric: true, sensitivity: "base" }) : 0)
     .map((s) => {
       const used = F.group.includes(s.id);
@@ -164,7 +167,11 @@ function renderStudentList() {
         h("span", {}, `${s.name}, ${s.first_name}`),
         h("span", { class: "meta" }, s.id));
       li.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/x-student-id", s.id));
-      li.addEventListener("dblclick", () => addToGroup(s.id));
+      li.addEventListener("click", () => {
+        if (F.group.includes(s.id)) F.group = F.group.filter((g) => g !== s.id);
+        else F.group.push(s.id);
+        renderForm();
+      });
       return li;
     });
   $("#student-count").textContent = items.length;
@@ -212,6 +219,14 @@ $("#file-zone").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#
 $("#file-input").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
 
 $("#student-search").addEventListener("input", renderStudentList);
+$("#student-search").addEventListener("keydown", (e) => {
+  if (e.key !== "Enter") return;
+  const matches = matchingStudents();
+  if (matches.length !== 1) return;
+  e.preventDefault();
+  e.target.value = "";
+  addToGroup(matches[0].id);
+});
 $("#student-sort").addEventListener("click", (e) => {
   if (!e.target.dataset.sort) return;
   studentSort = e.target.dataset.sort;
