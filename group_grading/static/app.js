@@ -510,6 +510,16 @@ function renderOverview() {
 }
 
 $("#overview-filter").addEventListener("input", () => O.data && renderOverview());
+$("#overview-filter").addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  e.target.value = "";
+  if (O.data) renderOverview();
+});
+document.addEventListener("keydown", (e) => {
+  if ($("#tab-overview").hidden || e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target.closest("input, textarea, select, [contenteditable]")) return;
+  $("#overview-filter").focus();
+});
 $("#export-csv").addEventListener("click", () => { location.href = "/api/overview.csv"; });
 $("#download-all").addEventListener("click", () => { location.href = "/api/bundle-all.zip"; });
 
