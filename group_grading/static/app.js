@@ -76,6 +76,21 @@ document.querySelectorAll("#tabs button").forEach((b) =>
 // Dropping outside a zone must not navigate away from the page.
 for (const ev of ["dragover", "drop"]) window.addEventListener(ev, (e) => e.preventDefault());
 
+// ---------------------------------------------------------------- theme
+
+const applyTheme = (night) => {
+  document.body.classList.toggle("night", night);
+  const toggle = $("#night-toggle");
+  toggle.textContent = night ? "\u2600\uFE0E" : "\u263E";
+  toggle.title = night ? "Switch to day mode" : "Switch to night mode";
+};
+applyTheme(localStorage.getItem("theme") !== "day");
+$("#night-toggle").addEventListener("click", () => {
+  const night = !document.body.classList.contains("night");
+  localStorage.setItem("theme", night ? "night" : "day");
+  applyTheme(night);
+});
+
 // ---------------------------------------------------------------- submissions tab
 
 const emptyForm = (assignment = Object.keys(S.tasks)[0] || "") => ({ id: null, assignment, group: [], pending: [], existing: [] });
