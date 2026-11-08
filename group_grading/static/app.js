@@ -546,10 +546,11 @@ function renderOverview() {
 }
 
 $("#overview-filter").addEventListener("input", () => O.data && renderOverview());
-$("#overview-filter").addEventListener("keydown", (e) => {
-  if (e.key !== "Escape") return;
-  e.target.value = "";
-  if (O.data) renderOverview();
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || $("#tab-overview").hidden || $("#report-dialog").open) return;
+  if (!$("#overview-filter").value || !O.data) return;
+  $("#overview-filter").value = "";
+  renderOverview();
 });
 document.addEventListener("keydown", (e) => {
   if ($("#tab-overview").hidden || e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
