@@ -297,6 +297,8 @@ async function saveGrades() {
       overrides: sub.overrides,
     });
     $("#save-state").textContent = "Saved";
+    const entry = S.submissions.find((s) => s.id === sub.id);
+    if (entry) entry.grades = sub.grades;
   } catch (e) {
     G.dirty = true;
     $("#save-state").textContent = "Save failed";
@@ -345,18 +347,34 @@ function pointsInput(value, max, onChange) {
   return input;
 }
 
-async function renderGradingTab() {
-  const sel = $("#grade-submission");
-  const current = G.sub ? G.sub.id : sel.value;
+function isFullyGraded(s) {
+  const grades = s.grades || {};
+  return Object.keys(S.tasks[s.assignment] || {}).every((t) => grades[t]?.points != null);
+}
+
+function fillGradeSelect(sel, subs, selectedId) {
+  const picked = subs.some((s) => s.id === selectedId);
   sel.replaceChildren(
-    ...S.submissions.map((s) => h("option", { value: s.id, selected: s.id === current }, `${s.id} – ${s.students.map(nameOf).join(", ")}`))
+    h("option", { value: "", selected: !picked, disabled: true }, subs.length ? "Select…" : "None"),
+    ...subs.map((s) => h("option", { value: s.id, selected: s.id === selectedId }, `${s.id} – ${s.students.map(nameOf).join(", ")}`))
   );
-  if (!S.submissions.length) {
+}
+
+function fillGradeSelects(selectedId) {
+  fillGradeSelect($("#grade-submission"), S.submissions.filter((s) => !isFullyGraded(s)), selectedId);
+  fillGradeSelect($("#grade-done"), S.submissions.filter(isFullyGraded), selectedId);
+}
+
+async function renderGradingTab() {
+  const wanted = G.sub ? G.sub.id : $("#grade-submission").value;
+  const target = S.submissions.find((s) => s.id === wanted) || S.submissions.find((s) => !isFullyGraded(s)) || S.submissions[0];
+  fillGradeSelects(target?.id);
+  if (!target) {
     G.sub = null;
     $("#grading-body").replaceChildren(h("p", {}, "No submissions yet."));
     return;
   }
-  await loadGrade(sel.value);
+  await loadGrade(target.id);
 }
 
 async function openGrading(sid) {
@@ -433,10 +451,13 @@ function renderGradingBody() {
   G.previews.forEach((u) => u());
 }
 
-$("#grade-submission").addEventListener("change", guard(async (e) => {
+const onGradePick = guard(async (e) => {
   await flushSave();
   await loadGrade(e.target.value);
-}));
+  fillGradeSelects(e.target.value);
+});
+$("#grade-submission").addEventListener("change", onGradePick);
+$("#grade-done").addEventListener("change", onGradePick);
 
 // ---------------------------------------------------------------- overview tab
 
