@@ -513,7 +513,7 @@ function renderOverview() {
     });
 
   const th = (label, key) => h("th", { class: "sortable", onclick: () => {
-    O.sortDir = O.sortKey === key ? -O.sortDir : 1;
+    O.sortDir = O.sortKey === key ? -O.sortDir : -1;
     O.sortKey = key;
     renderOverview();
   } }, label, O.sortKey === key ? (O.sortDir > 0 ? " ▲" : " ▼") : "");
