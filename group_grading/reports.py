@@ -65,11 +65,11 @@ def student_report(course: Course, student_id: str, submission_id: str | None = 
             weight = f" | {t['weight']}" if weighted else ""
             out.append(f"| {t['task']}{weight} | {_fmt(t['points'])} / {t['max']} |")
         out += [f"| **Total**{' |' if weighted else ''} | **{r['total']} / {r['max']}** |", ""]
+        if r["general_feedback"].strip():
+            out += ["### General feedback", "", r["general_feedback"].strip(), ""]
         for t in r["tasks"]:
             if t["feedback"].strip():
                 out += [f"### {t['task']} ({_fmt(t['points'])} / {t['max']})", "", t["feedback"].strip(), ""]
-        if r["general_feedback"].strip():
-            out += ["### General feedback", "", r["general_feedback"].strip(), ""]
     return "\n".join(out).rstrip() + "\n"
 
 
