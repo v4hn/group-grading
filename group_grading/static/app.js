@@ -461,7 +461,7 @@ function renderGradingBody() {
 
   const showGeneral = Object.keys(tasks).length > 1;
   const showOverrides = sub.students.length > 1;
-  body.replaceChildren(header, ...cards, ...(showGeneral ? [general] : []), ...(showOverrides ? [overrides] : []));
+  body.replaceChildren(header, ...(showGeneral ? [general] : []), ...cards, ...(showOverrides ? [overrides] : []));
   if (showOverrides) renderOverrides();
   G.previews.forEach((u) => u());
 }
