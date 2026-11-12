@@ -2,7 +2,7 @@
 body.night { --border: #3a4150; --accent: #6b9bff; --bg: #15171c; --warn: #f59e0b; --surface: #1f2228; --text: #e4e7ec; --muted: #9aa3b2; --hover: #2a2f38; --line: #2c313b; --head: #262a33; --row-hover: #252a34; --list-hover: #243047; --drop-hover: #243047; --assigned: #3a3f4a; --chip: #2b3a5c; --chip-sugg: #2c3038; --chip-sugg-hover: #3a404b; --tag: #2c313b; --tag-new: #1d4a33; --preview: #1a1d23; --override: #2e2a1c; --override-border: #6b5a22; --over-max: #33261a; --danger: #f87171; --placeholder: #7c8594; color-scheme: dark; }
 * { box-sizing: border-box; }
 body { margin: 0; font: 15px/1.4 system-ui, sans-serif; background: var(--bg); color: var(--text); }
-header { display: flex; align-items: center; gap: 24px; padding: 8px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 24px; padding: 8px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
 h1 { display: flex; align-items: center; gap: 8px; font-size: 18px; margin: 0; }
 h2 { font-size: 16px; margin: 0 0 8px; }
 h2#form-title { display: flex; align-items: center; gap: 8px; }
