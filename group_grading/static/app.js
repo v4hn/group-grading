@@ -119,7 +119,9 @@ function suggestedMembers() {
 }
 
 function renderForm() {
-  $("#form-title").textContent = F.id ? `Edit ${F.id}` : "New submission";
+  $("#form-title-text").textContent = F.id ? `Edit ${F.id}` : "New submission";
+  $("#reset-form").hidden = !F.id;
+  $("#delete-submission").hidden = !F.id;
 
   const sel = $("#assignment");
   sel.replaceChildren(...Object.keys(S.tasks).map((a) => h("option", { value: a, selected: a === F.assignment }, a)));
@@ -248,7 +250,18 @@ $("#student-sort").addEventListener("click", (e) => {
   renderStudentList();
 });
 $("#assignment").addEventListener("change", (e) => { F.assignment = e.target.value; renderForm(); });
-$("#reset-form").addEventListener("click", () => { F = emptyForm(); renderForm(); });
+$("#reset-form").addEventListener("click", () => {
+  F = emptyForm(F.assignment);
+  renderSubmissionsTab();
+});
+
+$("#delete-submission").addEventListener("click", guard(async () => {
+  if (!F.id || !confirm(`Delete ${F.id} including its files and grades?`)) return;
+  await api("DELETE", `/api/submissions/${encodeURIComponent(F.id)}`);
+  F = emptyForm(F.assignment);
+  await loadSubmissions();
+  renderSubmissionsTab();
+}));
 
 $("#save-submission").addEventListener("click", guard(async () => {
   if (!F.group.length) throw new Error("Add at least one student to the group");
@@ -278,14 +291,7 @@ function renderSubmissionTable() {
       h("td", {}, ...s.files.flatMap((f, i) => [i ? ", " : null, h("a", { href: fileUrl(s.id, f) }, f)])),
       h("td", {},
         h("button", { onclick: guard(() => openEditing(s)) }, "Edit"), " ",
-        h("button", { onclick: guard(async () => { await openGrading(s.id); }) }, "Grade"), " ",
-        h("button", { class: "danger", onclick: guard(async () => {
-          if (!confirm(`Delete ${s.id} including its files and grades?`)) return;
-          await api("DELETE", `/api/submissions/${encodeURIComponent(s.id)}`);
-          if (F.id === s.id) F = emptyForm();
-          await loadSubmissions();
-          renderSubmissionsTab();
-        }) }, "Delete")))
+        h("button", { onclick: guard(async () => { await openGrading(s.id); }) }, "Grade")))
   );
   $("#submission-table").replaceChildren(head, ...rows);
 }

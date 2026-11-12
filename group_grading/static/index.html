@@ -35,7 +35,7 @@
         </div>
 
         <div class="panel grow">
-          <h2 id="form-title">New submission</h2>
+          <h2 id="form-title"><span id="form-title-text">New submission</span><button id="reset-form" hidden>Close</button></h2>
           <label>Assignment <select id="assignment"></select></label>
 
           <h3>This group</h3>
@@ -50,8 +50,8 @@
           <input id="file-input" type="file" multiple hidden>
 
           <div class="actions">
-            <button id="save-submission" class="primary">Save submission</button>
-            <button id="reset-form">Clear</button>
+            <button id="save-submission" class="primary">Save Submission</button>
+            <button id="delete-submission" class="danger" hidden>Delete Submission</button>
           </div>
         </div>
       </div>
