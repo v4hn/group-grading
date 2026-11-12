@@ -340,7 +340,16 @@ function mdEditor(value, onChange) {
   const host = h("div", { class: "md-host" });
   const preview = h("div", { class: "preview" });
   const wrap = h("div", { class: "md-wrap" }, host, preview);
-  const cm = CodeMirror(host, { value: value || "", mode: "markdown", lineWrapping: true, viewportMargin: Infinity });
+  const cm = CodeMirror(host, {
+    value: value || "",
+    mode: "markdown",
+    lineWrapping: true,
+    viewportMargin: Infinity,
+    extraKeys: {
+      Tab: false,
+      "Shift-Tab": false,
+    },
+  });
   const update = () => {
     preview.innerHTML = renderMd(cm.getValue());
     cm.refresh();
