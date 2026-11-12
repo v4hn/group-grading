@@ -573,7 +573,7 @@ function renderOverview() {
     return h("tr", {},
       h("td", {}, r.student.id), h("td", {}, r.student.name), h("td", {}, r.student.first_name), ...cells,
       h("td", { class: "num", title: "Relative to the total of all assignments" }, r.max ? `${r.total} / ${r.max}` : "–"),
-      h("td", { class: "num" }, r.percent === null ? "–" : `${r.percent}%`),
+      h("td", { class: "num" }, r.percent === null ? "–" : `${r.percent.toFixed(1)}%`),
       h("td", {},
         h("button", { onclick: guard(() => openReport(r.student)) }, "Report"), " ",
         h("a", { class: "button", href: `/api/students/${sid}/bundle.zip` }, "ZIP")));
