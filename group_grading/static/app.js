@@ -534,6 +534,15 @@ function sortRank(row, key) {
   return !cell ? 2 : cell.points === null ? 1 : 0;
 }
 
+function highlightOverviewGroup(submissionId, active) {
+  for (const cell of $("#overview-table").querySelectorAll("td[data-submission-id]")) {
+    const duplicates = cell.dataset.duplicateIds.split(",");
+    if (cell.dataset.submissionId === submissionId || duplicates.includes(submissionId)) {
+      cell.classList.toggle("group-hover", active);
+    }
+  }
+}
+
 function renderOverview() {
   const { assignments, rows } = O.data;
   const q = $("#overview-filter").value.trim().toLowerCase();
@@ -565,7 +574,14 @@ function renderOverview() {
       if (!c) return h("td", { class: "missing" }, "–");
       const label = c.points === null ? "ungraded" : `${c.points} / ${c.max}`;
       const warn = c.duplicates.length ? ` ⚠ also in ${c.duplicates.join(", ")}` : "";
-      return h("td", { class: c.submission_id === selectedId ? "num selected-for-grading" : "num", title: c.submission_id + warn },
+      return h("td", {
+        class: c.submission_id === selectedId ? "num selected-for-grading" : "num",
+        title: c.submission_id + warn,
+        "data-submission-id": c.submission_id,
+        "data-duplicate-ids": c.duplicates.join(","),
+        onmouseenter: () => highlightOverviewGroup(c.submission_id, true),
+        onmouseleave: () => highlightOverviewGroup(c.submission_id, false),
+      },
         h("button", { class: "link", onclick: guard(() => openGrading(c.submission_id)) }, label),
         c.duplicates.length ? " ⚠" : "");
     });
