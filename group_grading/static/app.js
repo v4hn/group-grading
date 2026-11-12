@@ -73,6 +73,15 @@ document.querySelectorAll("#tabs button").forEach((b) =>
   }))
 );
 
+document.addEventListener("keydown", (e) => {
+  if (!e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || !["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+  e.preventDefault();
+  const tabs = [...document.querySelectorAll("#tabs button")];
+  const index = tabs.findIndex((tab) => tab.classList.contains("active"));
+  const next = index + (e.key === "ArrowRight" ? 1 : -1);
+  if (index >= 0 && tabs[next]) tabs[next].click();
+}, true);
+
 // Dropping outside a zone must not navigate away from the page.
 for (const ev of ["dragover", "drop"]) window.addEventListener(ev, (e) => e.preventDefault());
 
@@ -253,6 +262,11 @@ $("#assignment").addEventListener("change", (e) => { F.assignment = e.target.val
 $("#reset-form").addEventListener("click", () => {
   F = emptyForm(F.assignment);
   renderSubmissionsTab();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || e.defaultPrevented || $("#tab-submissions").hidden || $("#report-dialog").open || !F.id) return;
+  e.preventDefault();
+  $("#reset-form").click();
 });
 
 $("#delete-submission").addEventListener("click", guard(async () => {
@@ -569,8 +583,8 @@ document.addEventListener("keydown", (e) => {
   renderOverview();
 });
 document.addEventListener("keydown", (e) => {
-  if ($("#tab-overview").hidden || e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
-  if (e.target.closest("input, textarea, select, [contenteditable]")) return;
+  if ($("#tab-overview").hidden || $("#report-dialog").open || e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target.closest('a[href], button, input, textarea, select, [contenteditable], [tabindex]:not([tabindex="-1"])')) return;
   $("#overview-filter").focus();
 });
 $("#export-csv").addEventListener("click", () => { location.href = "/api/overview.csv"; });
