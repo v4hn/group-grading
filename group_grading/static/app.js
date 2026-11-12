@@ -279,6 +279,7 @@ $("#delete-submission").addEventListener("click", guard(async () => {
 
 $("#save-submission").addEventListener("click", guard(async () => {
   if (!F.group.length) throw new Error("Add at least one student to the group");
+  const isNew = !F.id;
   const body = { assignment: F.assignment, students: F.group };
   let sub;
   if (F.id) sub = await api("PUT", `/api/submissions/${encodeURIComponent(F.id)}`, body);
@@ -290,6 +291,7 @@ $("#save-submission").addEventListener("click", guard(async () => {
     await api("POST", `/api/submissions/${encodeURIComponent(sub.id)}/files`, fd);
   }
   await loadSubmissions();
+  if (isNew) G.selectedId = sub.id;
   setStatus(`Saved ${sub.id}`);
   F = emptyForm(sub.assignment);
   renderSubmissionsTab();
@@ -312,7 +314,7 @@ function renderSubmissionTable() {
 
 // ---------------------------------------------------------------- grading tab
 
-const G = { sub: null, timer: null, dirty: false, editors: [], previews: [], overrideStudent: null };
+const G = { sub: null, selectedId: null, timer: null, dirty: false, editors: [], previews: [], overrideStudent: null };
 
 async function flushSave() {
   clearTimeout(G.timer);
@@ -411,8 +413,9 @@ function fillGradeSelects(selectedId) {
 }
 
 async function renderGradingTab() {
-  const wanted = G.sub ? G.sub.id : $("#grade-submission").value;
+  const wanted = G.selectedId || (G.sub ? G.sub.id : $("#grade-submission").value);
   const target = S.submissions.find((s) => s.id === wanted) || S.submissions.find((s) => !isFullyGraded(s)) || S.submissions[0];
+  G.selectedId = target?.id || null;
   fillGradeSelects(target?.id);
   if (!target) {
     G.sub = null;
@@ -424,6 +427,7 @@ async function renderGradingTab() {
 
 async function openGrading(sid) {
   await flushSave();
+  G.selectedId = sid;
   G.sub = { id: sid };
   showTab("grading");
 }
@@ -497,6 +501,7 @@ function renderGradingBody() {
 }
 
 const onGradePick = guard(async (e) => {
+  G.selectedId = e.target.value;
   await flushSave();
   await loadGrade(e.target.value);
   fillGradeSelects(e.target.value);
@@ -532,6 +537,7 @@ function sortRank(row, key) {
 function renderOverview() {
   const { assignments, rows } = O.data;
   const q = $("#overview-filter").value.trim().toLowerCase();
+  const selectedId = G.selectedId;
   const visible = rows
     .filter((r) => !q || `${r.student.name} ${r.student.first_name} ${r.student.id}`.toLowerCase().includes(q))
     .sort((a, b) => {
@@ -559,7 +565,7 @@ function renderOverview() {
       if (!c) return h("td", { class: "missing" }, "–");
       const label = c.points === null ? "ungraded" : `${c.points} / ${c.max}`;
       const warn = c.duplicates.length ? ` ⚠ also in ${c.duplicates.join(", ")}` : "";
-      return h("td", { class: "num", title: c.submission_id + warn },
+      return h("td", { class: c.submission_id === selectedId ? "num selected-for-grading" : "num", title: c.submission_id + warn },
         h("button", { class: "link", onclick: guard(() => openGrading(c.submission_id)) }, label),
         c.duplicates.length ? " ⚠" : "");
     });
