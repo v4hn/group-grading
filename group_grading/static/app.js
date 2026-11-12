@@ -368,6 +368,7 @@ function isFullyGraded(s) {
 }
 
 function fillGradeSelect(sel, subs, selectedId) {
+  subs.sort((a, b) => a.assignment.localeCompare(b.assignment, undefined, { sensitivity: "base" }) || a.id.localeCompare(b.id, undefined, { numeric: true }));
   const picked = subs.some((s) => s.id === selectedId);
   sel.replaceChildren(
     h("option", { value: "", selected: !picked, disabled: true }, subs.length ? "Select…" : "None"),
