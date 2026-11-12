@@ -1,5 +1,6 @@
 import io
 import zipfile
+from xml.etree import ElementTree
 
 import pytest
 from fastapi.testclient import TestClient
@@ -27,6 +28,16 @@ def make_sub(client, assignment="a1", students=("1", "2")):
     r = client.post("/api/submissions", json={"assignment": assignment, "students": list(students)})
     assert r.status_code == 201, r.text
     return r.json()
+
+
+def test_icon_is_served_and_used_as_favicon(client):
+    page = client.get("/")
+    assert '<link rel="icon" href="icon.svg" type="image/svg+xml">' in page.text
+    assert '<img src="icon.svg" alt=""' in page.text
+    icon = client.get("/icon.svg")
+    assert icon.status_code == 200
+    assert icon.headers["content-type"].startswith("image/svg+xml")
+    assert ElementTree.fromstring(icon.content).tag == "{http://www.w3.org/2000/svg}svg"
 
 
 def test_students_parsed_with_bom_and_semicolon(client):

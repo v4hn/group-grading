@@ -3,7 +3,7 @@ body.night { --border: #3a4150; --accent: #6b9bff; --bg: #15171c; --warn: #f59e0
 * { box-sizing: border-box; }
 body { margin: 0; font: 15px/1.4 system-ui, sans-serif; background: var(--bg); color: var(--text); }
 header { display: flex; align-items: center; gap: 24px; padding: 8px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
-h1 { font-size: 18px; margin: 0; }
+h1 { display: flex; align-items: center; gap: 8px; font-size: 18px; margin: 0; }
 h2 { font-size: 16px; margin: 0 0 8px; }
 h2#form-title { display: flex; align-items: center; gap: 8px; }
 h3 { font-size: 14px; margin: 16px 0 6px; }
