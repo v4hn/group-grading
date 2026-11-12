@@ -74,7 +74,7 @@ document.querySelectorAll("#tabs button").forEach((b) =>
 );
 
 document.addEventListener("keydown", (e) => {
-  if (!e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || !["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+  if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || !["ArrowLeft", "ArrowRight"].includes(e.key)) return;
   e.preventDefault();
   const tabs = [...document.querySelectorAll("#tabs button")];
   const index = tabs.findIndex((tab) => tab.classList.contains("active"));
